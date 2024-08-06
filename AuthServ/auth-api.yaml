@@ -1,0 +1,164 @@
+openapi: 3.0.3
+info:
+  title: Authentication Service API
+  version: 1.0.0
+  description: API для сервиса аутентификации пользователей
+
+paths:
+  /auth/login:
+    post:
+      summary: User authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Authentication success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '401':
+          description: Incorrect accounting information
+
+  /users/{userId}:
+    get:
+      summary: Получение данных пользователя
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное получение данных
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Пользователь не найден
+
+    put:
+      summary: Обновление данных пользователя
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: Данные успешно обновлены
+        '403':
+          description: Отказано в доступе
+        '404':
+          description: Пользователь не найден
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+          format: password
+
+    AuthToken:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: JWT токен доступа
+        token_type:
+          type: string
+          example: "Bearer"
+        expires_in:
+          type: integer
+          description: Время жизни токена в секундах
+          example: 3600
+        refresh_token:
+          type: string
+          description: Токен для обновления access_token
+          
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Уникальный идентификатор пользователя (java.util.UUID)
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        login:
+          type: string
+          example: "JoneDow"
+        firstName:
+          type: string
+          example: "Jone"
+        lastName:
+          type: string
+          example: "Dow"
+        birthDate:
+          type: string
+          format: date
+          description: Дата рождения пользователя (java.time.LocalDate)
+          example: "1990-01-01"
+        email:
+          type: string
+          format: email
+          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+          example: "user@mail.ru"
+        phoneNumber:
+          type: string
+          pattern: '^\8 \(\d{3}\) \d{3}-\d{2}-\d{2}$'
+          example: '8 (999) 123-45-67'
+
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "Jone"
+        lastName:
+          type: string
+          example: "Dow"
+        birthDate:
+          type: string
+          format: date
+          description: Дата рождения пользователя (java.time.LocalDate)
+          example: "1990-01-01"
+        email:
+          type: string
+          format: email
+          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+          example: "user@mail.ru"
+        phoneNumber:
+          type: string
+          pattern: '^\8 \(\d{3}\) \d{3}-\d{2}-\d{2}$'
+          example: '8 (999) 123-45-67'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'JWT токен авторизации. Префикс "Bearer " должен быть включен в заголовок Authorization.'
+
+security:
+  - BearerAuth: []
