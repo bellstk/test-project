@@ -1,0 +1,28 @@
+spring:
+  application:
+    name:
+      authorization
+
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/testdb
+    username: service
+    password: secret123
+    driverClassName: org.postgresql.Driver
+
+springdoc:
+  api-docs:
+    path: /api-docs
+    version: openapi_3_1
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+jwt:
+  secret: 53A73E5F1C4E0A2D3B5F2D784E6A1B423D6F247D1F6E5C3A596D635A75327855
+  expiration: 6000000
