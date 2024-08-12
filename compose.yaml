@@ -1,0 +1,10 @@
+services:
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: testdb
+      POSTGRES_USER: service
+      POSTGRES_PASSWORD: secret123
+    ports:
+      - 5432
